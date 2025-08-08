@@ -1,0 +1,159 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Testing Sudoku Game</title>
+    <style>
+        table, td, th {
+            border: 1px solid black;
+            border-collapse: collapse;
+            padding: 8px;
+            align-content:center;
+        }
+        td, td input{
+            width:10px;
+        }
+        #checkbutton{
+            display:none;
+        }
+        #Mainboard{
+            margin:10px 0px 0px 0px;
+        }
+    </style>
+</head>
+<body>
+    <label for="Difficulty">Độ khó</label>
+    <select id="Difficulty">
+        <option>---Chọn độ khó---</option>
+        <option value="Easy">Dễ</option>
+        <option value="Normal">Bình thường</option>
+        <option value="Difficult">Khó</option>
+    </select>
+    <table id="Mainboard">
+    </table>
+    <br/>
+    <input id="checkbutton" type="button" onclick="checkending()" value="Kiểm tra"/>
+    <script>
+        function build(n) {
+            //testing
+            var html = "";
+            var a = new Array(n + 1).fill(0);
+            var h = 0, w = 0;
+            const tt = Array.from({ length: n }, () => Array(n).fill(0));
+            for (let j = 0; j < n; j++) {
+                var val = Math.floor(Math.random() * (n + 1));
+                a[val]++;
+                tt[0][j] = val;
+                if (a[val] > 1) tt[0][j] = 0;
+            }
+            a = new Array(n + 1).fill(0);
+            
+            for (let i = 0; i < n; i++) {
+                html += "<tr>";
+                for (let j = 0; j < n; j++) {
+                    if (tt[i][j] == 0) html += "<td id='" + i * n + j + "'><input id='inp" + i * n + j + "' type='text'/></td>";
+                    else html += "<td id='" + i * n + j + "'>" + tt[i][j] + "</td>";
+                }
+                html += "</tr>";
+            }
+            document.getElementById('checkbutton').style = "display:block flow-root";
+            return html;
+        }
+        const DifficultySelect = document.getElementById('Difficulty');
+        const MainboardTable = document.getElementById('Mainboard');
+        DifficultySelect.addEventListener('change', function () {
+            switch (DifficultySelect.value) {
+                case "Easy": MainboardTable.innerHTML = build(6); break;
+                case "Normal": MainboardTable.innerHTML = build(9); break;
+                case "Difficult": MainboardTable.innerHTML = build(12); break;
+                default: alert("Mời bạn chọn độ khó"); break;
+            }
+        });
+
+        function checkending() {
+            const n = document.getElementsByTagName('tr').length;
+            var rck = "";
+            var a = "";
+            var nck = "";
+            var ck = "";
+            var sck = "";
+            for (let i = 0; i < n; i++) {
+                nck += "" + (i + 1);
+                sck += "t";
+            }
+            //rule1
+            for (let i = 0; i < n; i++) {
+                for (let j = 0; j < n; j++) {
+                    var htmlcell = document.getElementById("" + i * n + j).innerHTML;
+                    if (htmlcell.includes('input')) {
+                        a += document.getElementById('inp' + i * n + j).value;
+                    } else a += htmlcell;
+                }
+                if (nck == a.split('').sort().join('')) {
+                    ck += "t";
+                }
+                a = "";
+            }
+            if (sck == ck) rck += "t";
+            else rck += "f";
+            //rule2
+            a = "";
+            nck = "";
+            ck = "";
+            sck = "";
+            for (let i = 0; i < n; i++) {
+                nck += "" + (i + 1);
+                sck += "t";
+            }
+            for (let j = 0; j < n; j++) {
+                for (let i = 0; i < n; i++) {
+                    var htmlcell = document.getElementById("" + i * n + j).innerHTML;
+                    if (htmlcell.includes('input')) {
+                        a += document.getElementById('inp' + i * n + j).value;
+                    } else a += htmlcell;
+                }
+                if (nck == a.split('').sort().join('')) {
+                    ck += "t";
+                }
+                a = "";
+            }
+            if (sck == ck) rck += "t";
+            else rck += "f";
+            //rule3
+            a = "";
+            nck = "";
+            ck = "";
+            sck = "";
+            for (let i = 0; i < n; i++) {
+                nck += "" + (i + 1);
+                sck += "t";
+            }
+            var h = 0, w = 0;
+            if (n == 6) h = 2, w = 3;
+            if (n == 9) h = 3, w = 3;
+            if (n == 12) h = 3, w = 4;
+            for (let si = 0; si < (n / h); si++) {
+                for (let sj = 0; sj < (n / w); sj++) {
+                    for (let i = 0; i < h; i++) {
+                        for (let j = 0; j < w; j++) {
+                            var htmlcell = document.getElementById("" + (i + si * h) * n + (j + sj * w)).innerHTML;
+                            if (htmlcell.includes('input')) {
+                                a += document.getElementById('inp' + (i + si * h) * n + (j + sj * w)).value;
+                            } else a += htmlcell;
+                        }
+                    }
+                    if (nck == a.split('').sort().join('')) {
+                        ck += "t";
+                    }
+                    a = "";
+                }
+            }
+            if (sck == ck) rck += "t";
+            else rck += "f";
+            if (rck == "ttt") alert("Chính xác!");
+            else alert("Không chính xác!");
+        }
+
+    </script>
+</body>
+</html>
